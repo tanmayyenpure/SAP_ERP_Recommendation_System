@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your SAP ERP Recommendation</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  {% if not error %}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  {% endif %}
+</head>
+<body>
+  <div class="container wide">
+    <h1>Your SAP ERP Recommendation</h1>
+
+    {% if error %}
+      <div class="error-box">
+        <strong>Something went wrong:</strong>
+        <p>{{ error }}</p>
+      </div>
+      <a class="back-link" href="/">&larr; Go back and try again</a>
+    {% else %}
+
+      <!-- Top recommendation card -->
+      <div class="result-card">
+        <h2>{{ recommendation.recommended_sap_product }}</h2>
+        <span class="badge">Fit Score: {{ recommendation.confidence_score }}/100</span>
+        <h3>Why this fits</h3>
+        <p>{{ recommendation.reasoning }}</p>
+      </div>
+
+      <!-- KPI strip -->
+      <div class="kpi-strip">
+        <div class="kpi-card">
+          <div class="kpi-value">₹{{ recommendation.total_cost_inr_lakhs }} L</div>
+          <div class="kpi-label">Estimated Total Cost</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">{{ recommendation.implementation_timeline_months }} mo</div>
+          <div class="kpi-label">Implementation Timeline</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">{{ recommendation.confidence_score }}%</div>
+          <div class="kpi-label">Recommendation Confidence</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value">{{ recommendation.recommended_modules | length }}</div>
+          <div class="kpi-label">Modules Recommended</div>
+        </div>
+      </div>
+
+      <!-- Dashboard: charts -->
+      <div class="dashboard-grid">
+        <div class="chart-card">
+          <h3>Module Fit Scores</h3>
+          <canvas id="moduleChart"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Cost Breakdown (₹ Lakhs)</h3>
+          <canvas id="costChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Module detail list -->
+      <div class="result-card">
+        <h3>Recommended SAP Modules</h3>
+        <ul class="module-list">
+          {% for module in recommendation.recommended_modules %}
+            <li>
+              <strong>{{ module.name }}</strong> — {{ module.suitability_score }}/100
+              <div class="module-reason">{{ module.reason }}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="result-card">
+        <h3>Alternative Option</h3>
+        <p>{{ recommendation.alternative_option }}</p>
+
+        <h3>India Compliance Notes</h3>
+        <p>{{ recommendation.india_compliance_notes }}</p>
+      </div>
+
+      <div class="result-card">
+        <h3>Starter RFP Outline</h3>
+        <ol>
+          {% for section in recommendation.rfp_outline %}
+            <li>{{ section }}</li>
+          {% endfor %}
+        </ol>
+      </div>
+
+      <details class="input-summary">
+        <summary>Company profile you submitted</summary>
+        <ul>
+          <li><strong>Industry:</strong> {{ form_data.industry }}</li>
+          <li><strong>Company size:</strong> {{ form_data.company_size }}</li>
+          <li><strong>Annual turnover:</strong> {{ form_data.turnover }}</li>
+          <li><strong>Locations:</strong> {{ form_data.locations }}</li>
+          <li><strong>GST registration:</strong> {{ form_data.gst_registered }}</li>
+          <li><strong>Exports/Imports:</strong> {{ form_data.export_import }}</li>
+          <li><strong>Current systems:</strong> {{ form_data.current_systems }}</li>
+          <li><strong>Goals:</strong> {{ form_data.goals }}</li>
+          <li><strong>Pain points:</strong> {{ form_data.pain_points }}</li>
+          <li><strong>Budget:</strong> {{ form_data.budget }}</li>
+          <li><strong>Deployment preference:</strong> {{ form_data.deployment }}</li>
+        </ul>
+      </details>
+
+      <a class="back-link" href="/">&larr; Run another recommendation</a>
+
+      <script>
+        const moduleLabels = {{ recommendation.recommended_modules | map(attribute='name') | list | tojson }};
+        const moduleScores = {{ recommendation.recommended_modules | map(attribute='suitability_score') | list | tojson }};
+
+        new Chart(document.getElementById('moduleChart'), {
+          type: 'bar',
+          data: {
+            labels: moduleLabels,
+            datasets: [{
+              label: 'Fit Score',
+              data: moduleScores,
+              backgroundColor: '#0b6cf0',
+              borderRadius: 6,
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { x: { min: 0, max: 100 } }
+          }
+        });
+
+        const costData = {{ recommendation.estimated_cost_inr_lakhs | tojson }};
+        new Chart(document.getElementById('costChart'), {
+          type: 'doughnut',
+          data: {
+            labels: Object.keys(costData).map(k => k.replace(/_/g, ' ')),
+            datasets: [{
+              data: Object.values(costData),
+              backgroundColor: ['#0b6cf0', '#38b2ac', '#f6ad55'],
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+          }
+        });
+      </script>
+    {% endif %}
+  </div>
+</body>
+</html>

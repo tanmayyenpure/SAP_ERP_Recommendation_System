@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SAP ERP Recommendation System — India</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>SAP ERP Recommendation System</h1>
+    <p class="subtitle">Built for Indian businesses — get the right SAP product, modules, and a starter RFP, with costs in ₹.</p>
+
+    <form action="/recommend" method="POST" class="form-card">
+      <label for="industry">Industry</label>
+      <select id="industry" name="industry" required>
+        <option value="">Select industry</option>
+        <option>Manufacturing</option>
+        <option>Retail / FMCG</option>
+        <option>Pharma / Healthcare</option>
+        <option>IT / ITES</option>
+        <option>Textile / Apparel</option>
+        <option>Automotive / Auto Ancillary</option>
+        <option>Trading / Distribution</option>
+        <option>Construction / Real Estate</option>
+        <option>Logistics / Supply Chain</option>
+        <option>Agriculture / Agri-processing</option>
+        <option>Other</option>
+      </select>
+
+      <label for="company_size">Company size (number of employees)</label>
+      <input type="text" id="company_size" name="company_size" placeholder="e.g. 250" required />
+
+      <label for="turnover">Annual turnover</label>
+      <select id="turnover" name="turnover" required>
+        <option value="">Select turnover range</option>
+        <option>Under ₹5 Crore</option>
+        <option>₹5 – ₹25 Crore</option>
+        <option>₹25 – ₹100 Crore</option>
+        <option>₹100 – ₹500 Crore</option>
+        <option>Above ₹500 Crore</option>
+      </select>
+
+      <label for="locations">Number of business locations / states of operation</label>
+      <input type="text" id="locations" name="locations" placeholder="e.g. 3 states, 5 branches" required />
+
+      <label for="gst_registered">GST registration</label>
+      <select id="gst_registered" name="gst_registered">
+        <option>Single GSTIN (single state)</option>
+        <option>Multiple GSTINs (multiple states)</option>
+        <option>Not yet registered</option>
+      </select>
+
+      <label for="export_import">Involved in exports/imports?</label>
+      <select id="export_import" name="export_import">
+        <option>No</option>
+        <option>Yes — exports</option>
+        <option>Yes — imports</option>
+        <option>Yes — both</option>
+      </select>
+
+      <label for="current_systems">Current systems in use</label>
+      <textarea id="current_systems" name="current_systems" placeholder="e.g. Tally, Excel-based tracking, no central inventory system" required></textarea>
+
+      <label for="goals">Key business goals</label>
+      <textarea id="goals" name="goals" placeholder="e.g. Improve inventory visibility, automate GST compliance, expand to 3 new states" required></textarea>
+
+      <label for="pain_points">Main pain points / challenges</label>
+      <textarea id="pain_points" name="pain_points" placeholder="e.g. Disconnected branches, manual GST filing, delayed order fulfillment" required></textarea>
+
+      <label for="budget">ERP budget (₹)</label>
+      <select id="budget" name="budget" required>
+        <option value="">Select budget range</option>
+        <option>Under ₹10 Lakh</option>
+        <option>₹10 – ₹25 Lakh</option>
+        <option>₹25 – ₹50 Lakh</option>
+        <option>₹50 Lakh – ₹1 Crore</option>
+        <option>Above ₹1 Crore</option>
+      </select>
+
+      <label for="deployment">Preferred deployment</label>
+      <select id="deployment" name="deployment">
+        <option value="No preference">No preference</option>
+        <option value="Cloud">Cloud</option>
+        <option value="On-Premise">On-Premise</option>
+        <option value="Hybrid">Hybrid</option>
+      </select>
+
+      <button type="submit">Get SAP Recommendation</button>
+    </form>
+  </div>
+</body>
+</html>
